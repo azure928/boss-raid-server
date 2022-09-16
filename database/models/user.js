@@ -1,7 +1,7 @@
 const Sequelize = require('sequelize');
 module.exports = function (sequelize, DataTypes) {
   return sequelize.define(
-    'users',
+    'user',
     {
       id: {
         autoIncrement: true,
@@ -9,10 +9,15 @@ module.exports = function (sequelize, DataTypes) {
         allowNull: false,
         primaryKey: true,
       },
+      total_score: {
+        type: DataTypes.INTEGER,
+        allowNull: true,
+        defaultValue: 0,
+      },
     },
     {
       sequelize,
-      tableName: 'users',
+      tableName: 'user',
       timestamps: true,
       indexes: [
         {
