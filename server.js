@@ -4,7 +4,6 @@ const express = require('express');
 const dotenv = require('dotenv');
 const routes = require('./src/indexRouter');
 const { sequelize } = require('./database/models/index');
-const session = require('express-session');
 const redis = require('redis');
 const axios = require('axios');
 const bodyParser = require('body-parser');
@@ -26,8 +25,7 @@ redisClient.on('error', err => {
 redisClient.connect().then(); // redis v4 연결 (비동기)
 const redisCli = redisClient.v4; // 기본 redisClient 객체는 콜백기반인데 v4버젼은 프로미스 기반이라 사용
 
-const app = express();
-
+//* DB 연결
 sequelize
   .sync({ force: false }) // true 로 설정하면 서버 실행마다 테이블 재생성
   .then(() => {
@@ -36,6 +34,8 @@ sequelize
   .catch(err => {
     console.error(err);
   });
+
+const app = express();
 
 // Body Parser 미들웨어
 app.use(bodyParser.urlencoded({ extended: false }));
