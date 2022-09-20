@@ -73,7 +73,7 @@ async function stopBossRaid(userId, raidRecordId) {
 
   let { total_score } = await userRepository.readUserById(userId);
   let { user_id, level, enter_time, end_time } =
-    await bossRaidRepository.readRaidLevelById(raidRecordId);
+    await bossRaidRepository.readRaidHistoryById(raidRecordId);
 
   // StaticData에서 보스레이드 정보 받아오기
   let { bossRaidLimitSeconds, levels } = await getStaticData();

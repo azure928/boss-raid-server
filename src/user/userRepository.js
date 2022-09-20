@@ -6,12 +6,16 @@ const Sequelize = SQ.Sequelize;
 const sequelize = require('sequelize');
 const Op = sequelize.Op;
 
-// 유저 생성
+/**
+ * 기능: user 생성 (중복되지 않는 user id 생성)
+ */
 const createUser = async () => {
   return await User.create({});
 };
 
-// 유저 조회 (유저의 보스레이드 총 점수와 참여기록 응답)
+/**
+ * 기능: user 조회 (user의 보스레이드 총 점수와 참여기록 응답)
+ */
 async function readUserRaidHistoryById(id) {
   return await User.findAll({
     attributes: [
@@ -36,7 +40,9 @@ async function readUserRaidHistoryById(id) {
   });
 }
 
-// 유저 조회
+/**
+ * 기능: id로 user 조회 (존재하는 user인지 확인)
+ */
 async function readUserById(id) {
   return await User.findOne({
     where: {

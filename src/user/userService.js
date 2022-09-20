@@ -11,7 +11,7 @@ async function createUser() {
 }
 
 // 유저 조회
-async function readUserRaidHistoryById(id) {
+async function readUserRaidHistory(id) {
   const existedUser = await userRepository.readUserById(id);
   console.log('existedUser', existedUser);
 
@@ -32,4 +32,4 @@ async function readUserRaidHistoryById(id) {
   }
 }
 
-module.exports = { createUser, readUserRaidHistoryById };
+module.exports = { createUser, readUserRaidHistory };

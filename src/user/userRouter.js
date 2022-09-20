@@ -6,6 +6,6 @@ const router = express.Router();
 router.post('/users', userController.createUser);
 
 // 유저 조회
-router.get('/users/:id', userController.readUserRaidHistoryById);
+router.get('/users/:id', userController.readUserRaidHistory);
 
 module.exports = router;
