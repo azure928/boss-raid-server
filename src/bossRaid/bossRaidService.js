@@ -41,4 +41,26 @@ async function readBossRaidStatus() {
   return result;
 }
 
-module.exports = { readBossRaidStatus };
+// 보스레이드 시작
+async function createRaidHistory(userId, level) {
+  let isEntered = false;
+
+  let bossRaidStatus = await readBossRaidStatus();
+
+  if (bossRaidStatus.canEnter === true) {
+    // 게임 시작 가능
+    const createdRaidHistory = await bossRaidRepository.createBossRaidHistory(
+      userId,
+      level
+    );
+
+    isEntered = true;
+    const raidRecordId = createdRaidHistory.id;
+    return { isEntered, raidRecordId };
+  } else {
+    // 게임 시작 불가능
+    return { isEntered };
+  }
+}
+
+module.exports = { readBossRaidStatus, createRaidHistory };

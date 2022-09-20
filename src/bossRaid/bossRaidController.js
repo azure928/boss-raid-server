@@ -17,4 +17,28 @@ async function readBossRaidStatus(req, res) {
   }
 }
 
-module.exports = { getStaticDataTest, readBossRaidStatus };
+// 보스레이드 시작
+async function createRaidHistory(req, res) {
+  try {
+    const { userId, level } = req.body;
+    const createdRaidHistory = await bossRaidService.createRaidHistory(
+      userId,
+      level
+    );
+
+    if (createdRaidHistory.isEntered == true) {
+      res.status(201).json(createdRaidHistory);
+    } else {
+      res.status(400).json(createdRaidHistory);
+    }
+  } catch (error) {
+    console.log(error);
+    return res.status(error.statusCode || 500).send(
+      { error: error.message } || {
+        error: 'Internal Server Error',
+      }
+    );
+  }
+}
+
+module.exports = { readBossRaidStatus, createRaidHistory };
