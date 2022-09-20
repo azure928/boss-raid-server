@@ -4,7 +4,6 @@ const express = require('express');
 const dotenv = require('dotenv');
 const routes = require('./src/indexRouter');
 const { sequelize } = require('./database/models/index');
-const bodyParser = require('body-parser');
 
 dotenv.config();
 
@@ -19,10 +18,6 @@ sequelize
   });
 
 const app = express();
-
-// Body Parser 미들웨어
-app.use(bodyParser.urlencoded({ extended: false }));
-app.use(bodyParser.json());
 
 app.use(morgan('dev'));
 app.use(express.json());
