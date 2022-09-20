@@ -11,4 +11,7 @@ router.post('/bossraid/enter', bossRaidController.startBossRaid);
 // 보스레이드 종료
 router.patch('/bossraid/end', bossRaidController.stopBossRaid);
 
+// 보스레이드 랭킹 조회
+router.get('/bossraid/topRankerList', bossRaidController.readBossRaidRank);
+
 module.exports = router;

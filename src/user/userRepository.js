@@ -3,8 +3,9 @@ const User = db.user;
 const Boss_raid_history = db.boss_raid_history;
 const SQ = require('sequelize');
 const Sequelize = SQ.Sequelize;
-const sequelize = require('sequelize');
-const Op = sequelize.Op;
+const { sequelize } = require('../../database/models/index');
+//const sequelize = require('sequelize');
+const { QueryTypes } = require('sequelize');
 
 /**
  * 기능: user 생성 (중복되지 않는 user id 생성)
@@ -67,9 +68,53 @@ async function updateUserTotalscore(total_score, userId) {
   );
 }
 
+/**
+ * 기능: user 조회 (total_score 내림차순으로 반환)
+ */
+async function readUsersOrderByScore() {
+  return await User.findAll({
+    attributes: [
+      ['id', 'userId'],
+      ['total_score', 'totalScore'],
+    ],
+    order: [['total_score', 'DESC']],
+    raw: true,
+    limit: 10,
+  });
+}
+
+/*
+async function readUserTotalScoreById(userId) {
+  return await User.findOne({
+    attributes: [
+      ['id', 'userId'],
+      ['total_score', 'totalScore'],
+    ],
+    raw: true,
+    where: {
+      id: userId,
+    },
+  });
+}*/
+
+/**
+ * 기능: user id 로 total_score 조회
+ */
+async function readUserTotalScoreById(userId) {
+  return await sequelize.query(
+    `SELECT * FROM (SELECT row_number() OVER(ORDER BY total_score DESC) AS ranking, id, total_score as totalScore FROM user)r WHERE id = ${userId}`,
+    {
+      bind: { status: 'active' },
+      type: QueryTypes.SELECT,
+    }
+  );
+}
+
 module.exports = {
   createUser,
   readUserRaidHistoryById,
   readUserById,
   updateUserTotalscore,
+  readUsersOrderByScore,
+  readUserTotalScoreById,
 };
