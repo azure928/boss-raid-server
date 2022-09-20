@@ -23,4 +23,38 @@ async function createBossRaidHistory(userId, level) {
   });
 }
 
-module.exports = { readBossRaidStatus, createBossRaidHistory };
+/**
+ * 기능: boss_raid_history 테이블에서 id로 level 찾기
+ */
+async function readRaidLevelById(raidRecordId) {
+  return await Boss_raid_history.findOne({
+    where: {
+      id: raidRecordId,
+    },
+  });
+}
+
+/**
+ * 기능: boss_raid_history 테이블에서 end_time, status, score 컬럼 업데이트하기
+ */
+async function updateRaidHistory(raidRecordId, endTimeFormat, status, score) {
+  return await Boss_raid_history.update(
+    {
+      status: status,
+      end_time: endTimeFormat,
+      score: score,
+    },
+    {
+      where: {
+        id: raidRecordId,
+      },
+    }
+  );
+}
+
+module.exports = {
+  readBossRaidStatus,
+  createBossRaidHistory,
+  readRaidLevelById,
+  updateRaidHistory,
+};

@@ -1,30 +1,30 @@
 const axios = require('axios');
 const { redisClient } = require('../database/config/redisClient');
+require('dotenv').config();
 
-/*
-const getStaticData = async () => {
-  const { data } = await axios.get(
-    'https://dmpilf5svl7rv.cloudfront.net/assignment/backend/bossRaidData.json'
-  );
-
-  return data.bossRaids[0];
-};*/
-
-async function getStaticData(req, res) {
+async function getStaticData(req, res, next) {
   try {
-    console.log(req.url);
-    const staticDataInfo = await axios.get(
-      'https://dmpilf5svl7rv.cloudfront.net/assignment/backend/bossRaidData.json'
-    );
+    const staticdata = await redisClient.json.get('staticdata');
+    //const staticdata = await redisClient.getex('staticdata');
+    //console.log('staticdata??', staticdata);
 
-    // response에서 data 가져오기
-    const staticData = staticDataInfo.data;
-    await redisClient.setex(req.url, 1440, JSON.stringify(staticData));
+    if (staticdata) {
+      console.log('Redis에 저장된 staticdata가 존재한다.');
+      return staticdata;
+    } else {
+      console.log('Redis에 저장된 staticdata가 존재하지 않는다.');
+      const response = await axios.get(process.env.STATIC_DATA_URL);
 
-    return res.json(staticData.bossRaids[0]);
+      const staticdata = response.data.bossRaids[0];
+      //console.log('staticdata!!', staticdata);
+
+      await redisClient.json.set('staticdata', '$', staticdata);
+      //await redisClient.setex('staticdata', 1440, JSON.stringify(staticdata));
+      return staticdata;
+    }
   } catch (error) {
     console.error(error);
-    return res.status(500).json(error);
+    return error;
   }
 }
 
