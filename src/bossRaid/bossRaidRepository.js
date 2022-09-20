@@ -2,7 +2,7 @@ const db = require('../../database/models/index');
 const Boss_raid_history = db.boss_raid_history;
 
 /**
- * 기능: 보스레이드 상태 조회(보스레이드 현재 상태 응답)
+ * 기능: 보스레이드 상태 조회 (보스레이드 현재 상태 응답)
  */
 async function readBossRaidStatus() {
   return await Boss_raid_history.findAll({
@@ -26,7 +26,7 @@ async function createBossRaidHistory(userId, level) {
 /**
  * 기능: boss_raid_history 테이블에서 id로 level 찾기
  */
-async function readRaidLevelById(raidRecordId) {
+async function readRaidHistoryById(raidRecordId) {
   return await Boss_raid_history.findOne({
     where: {
       id: raidRecordId,
@@ -55,6 +55,6 @@ async function updateRaidHistory(raidRecordId, endTimeFormat, status, score) {
 module.exports = {
   readBossRaidStatus,
   createBossRaidHistory,
-  readRaidLevelById,
+  readRaidHistoryById,
   updateRaidHistory,
 };

@@ -16,11 +16,11 @@ async function createUser(req, res) {
 }
 
 // 유저 조회
-async function readUserRaidHistoryById(req, res) {
+async function readUserRaidHistory(req, res) {
   try {
     const id = req.params.id;
 
-    const selectedUserInfo = await userService.readUserRaidHistoryById(id);
+    const selectedUserInfo = await userService.readUserRaidHistory(id);
     res.status(200).json(selectedUserInfo);
   } catch (error) {
     console.log(error);
@@ -32,4 +32,4 @@ async function readUserRaidHistoryById(req, res) {
   }
 }
 
-module.exports = { createUser, readUserRaidHistoryById };
+module.exports = { createUser, readUserRaidHistory };
