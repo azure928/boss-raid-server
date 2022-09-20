@@ -1,29 +1,62 @@
 # boss raid server
 
-> 원티드 프리온보딩 백엔드 코스 - 기업 과제를 위한 레포지토리
+> 보스레이드 PVE 컨텐츠 서버 API
 
 <br>
 
-## 📢 서비스 개요 (요구사항 분석)
+## 💬 서비스 개요 (요구사항 분석 및 구현 사항)
 
-**보스레이드 PVE 컨텐츠 서버 API**
+### 1. 유저 생성
 
--
+- 중복되지 않는 userId를 생성, score 는 default 값 0 으로 생성
+
+### 2. 유저 보스레이드 기록 조회
+
+- 유저의 보스레이드 총 점수와 참여기록 응답 (params로 user id를 전달받는다.)
+  - user 테이블에서 해당하는 유저의 총 점수를 조회
+  - boss_raid_history 테이블에서 해당하는 유저의 보스레이드 참여 기록 조회
+
+### 3. 보스레이드 상태 조회
+
+- 보스레이드 현재 상태 응답
+  - canEnter : 입장 가능한지
+  - enteredUserId : 현재 진행 중인 유저가 있다면, 해당 유저의 id
+- 입장 가능 조건
+  - 한 번에 한 명의 유저만 보스레이드 진행 가능
+  - 아무도 보스레이드를 시작한 기록이 없다면 시작 가능
+  - 시작한 기록이 있다면 마지막으로 시작한 유저가 보스레이드를 종료했거나, 시작한 시간으로부터 레이드 제한시간만큼 경과되었어야 함
+
+### 4. 보스레이드 시작
+
+- 보스레이드 상태 조회 함수를 호출하여 시작 가능 상태라면
+  중복되지 않는 raidRecordId를 생성하여 `isEntered:true` 와 함께 응답
+
+- 레이드 시작이 불가하다면 `isEntered : false` 응답<br>
+
+### 5. 보스레이드 종료
+
+- raidRecordId 종료 처리
+- 레이드 level에 따른 score 반영
+  - static data를 redis에 캐싱 하여 사용
+- 유효성 검사
+  - 입력받은 raid_record_id 를 이용하여 해당 레이드에 참여한 사용자 아이디, 레벨, 입장 시간을 조회한다.
+  - 조회한 사용자 아이디가 입력받은 사용자 아이디와 일치하지 않을 경우 예외 처리
+  - static data에서 읽어온 제한 시간을 초과한 경우 예외 처리
+
+### 6. 보스레이드 랭킹 조회
+
+- 유저 10명을 total score 내림차순으로 조회
+- 입력받은 유저 id로 나의 랭킹도 조회
 
 <br>
 
-## 💬 요구사항 구현 내용
+## 📃 API DOCS
 
-### 1.
+**[🔗 PostMan API Document](https://github.com/azure928/boss-raid-server)**
 
--
+<br>
 
-- **Method** :
-- **URI** :
-
----
-
-### 📚 ERD
+## 📚 ERD
 
 ![image](https://i.imgur.com/9UJMLG6.png)
 
@@ -36,6 +69,8 @@
 - 프레임워크 : `Express`
 - 데이터베이스 : `MySQL` `Redis`
 - ORM : `Sequelize`
+
+<br>
 
 ### 📂 폴더 구조
 
@@ -93,12 +128,6 @@ REDIS_PASSWORD=
 
 STATIC_DATA_URL=
 ```
-
-<br>
-
-## 📃 API DOCS
-
-**[🔗 PostMan API Document](https://github.com/azure928/boss-raid-server)**
 
 <br>
 
