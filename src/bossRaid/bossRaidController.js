@@ -1,5 +1,4 @@
 const bossRaidService = require('./bossRaidService');
-const getStaticData = require('../../utils/getStaticData');
 
 // 보스레이드 상태 조회
 async function readBossRaidStatus(req, res) {
@@ -18,10 +17,10 @@ async function readBossRaidStatus(req, res) {
 }
 
 // 보스레이드 시작
-async function createRaidHistory(req, res) {
+async function startBossRaid(req, res) {
   try {
     const { userId, level } = req.body;
-    const createdRaidHistory = await bossRaidService.createRaidHistory(
+    const createdRaidHistory = await bossRaidService.startBossRaid(
       userId,
       level
     );
@@ -41,4 +40,21 @@ async function createRaidHistory(req, res) {
   }
 }
 
-module.exports = { readBossRaidStatus, createRaidHistory };
+// 보스레이드 종료
+async function stopBossRaid(req, res) {
+  try {
+    const { userId, raidRecordId } = req.body;
+    const result = await bossRaidService.stopBossRaid(userId, raidRecordId);
+
+    return res.status(201).json({ message: '보스레이드 성공' });
+  } catch (error) {
+    console.log(error);
+    return res.status(error.statusCode || 500).send(
+      { error: error.message } || {
+        error: 'Internal Server Error',
+      }
+    );
+  }
+}
+
+module.exports = { readBossRaidStatus, startBossRaid, stopBossRaid };

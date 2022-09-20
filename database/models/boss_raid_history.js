@@ -24,7 +24,8 @@ module.exports = function (sequelize, DataTypes) {
       },
       enter_time: {
         type: DataTypes.DATE,
-        allowNull: true,
+        allowNull: false,
+        defaultValue: Sequelize.Sequelize.literal('CURRENT_TIMESTAMP'),
       },
       end_time: {
         type: DataTypes.DATE,

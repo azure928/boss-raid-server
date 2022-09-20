@@ -45,4 +45,25 @@ async function readUserById(id) {
   });
 }
 
-module.exports = { createUser, readUserRaidHistoryById, readUserById };
+/**
+ * 기능: user 테이블에서 total_score 컬럼 업데이트하기
+ */
+async function updateUserTotalscore(total_score, userId) {
+  return await User.update(
+    {
+      total_score,
+    },
+    {
+      where: {
+        id: userId,
+      },
+    }
+  );
+}
+
+module.exports = {
+  createUser,
+  readUserRaidHistoryById,
+  readUserById,
+  updateUserTotalscore,
+};
