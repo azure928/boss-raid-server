@@ -3,8 +3,9 @@ const userRepository = require('../user/userRepository');
 const RankingInfoDTO = require('./rankingInfoDTO');
 const MyRankingInfoDTO = require('./myRankingInfoDTO');
 const moment = require('moment');
-const { getStaticData } = require('../../utils/getStaticData');
 require('date-utils');
+const { getStaticData } = require('../../utils/getStaticData');
+const { setRankToRedis } = require('../../utils/setRankToRedis');
 const { redisClient } = require('../../database/config/redisClient');
 
 // 보스레이드 상태 조회
@@ -103,7 +104,7 @@ async function stopBossRaid(userId, raidRecordId) {
       throw error;
     }
 
-    // 3. 예외처리 (기존 raid_record 에 end_time 값이 존재한다면
+    // 2. 예외처리 (기존 raid_record 에 end_time 값이 존재한다면
     // 이미 종료된 레이드이기 때문에 중복되지 않도록 처리)
     if (end_time) {
       const error = new Error('이미 종료 처리 된 레이드입니다.');
@@ -111,7 +112,7 @@ async function stopBossRaid(userId, raidRecordId) {
       throw error;
     }
 
-    // 2. 예외 처리 (레이드 제한 시간 초과)
+    // 3. 예외 처리 (레이드 제한 시간 초과)
     let endTime = new Date();
     let endTimeFormat = endTime.toFormat('YYYY-MM-DD HH:MI:SS');
 
@@ -144,7 +145,8 @@ async function stopBossRaid(userId, raidRecordId) {
     // total_score 업데이트 (user 테이블)
     await userRepository.updateUserTotalscore(total_score, userId);
 
-    return bossRaidLimitSeconds;
+    // redis에 랭킹 업데이트
+    await setRankToRedis();
   } else {
     // 존재하지 않는 user일 경우
     const error = new Error('존재하지 않는 유저 아이디입니다.');
@@ -160,27 +162,7 @@ async function readBossRaidRank(userId) {
 
   // 존재하는 user일 경우
   if (existedUser) {
-    let rankingInfoData = [];
-    let rankingInfoArr = [];
-
-    // user 10명을 total_score 내림차순으로 조회
-    rankingInfoArr = await userRepository.readUsersOrderByScore();
-
-    for (let i = 0; i < rankingInfoArr.length; i++) {
-      rankingInfoData.push(
-        new RankingInfoDTO(
-          i,
-          rankingInfoArr[i].userId,
-          rankingInfoArr[i].totalScore
-        )
-      );
-    }
-
-    // Redis에 rankingInfoData 캐싱
-    console.log('Redis에 랭킹 정보 캐싱');
-    await redisClient.json.set('rankingInfoData', '$', rankingInfoData);
-    // 20분 후 만료 되도록 설정
-    await redisClient.expire('rankingInfoData', 1200);
+    const rankingInfoData = await setRankToRedis();
 
     return rankingInfoData;
   } else {

@@ -79,7 +79,7 @@ async function readUsersOrderByScore() {
     ],
     order: [['total_score', 'DESC']],
     raw: true,
-    limit: 10,
+    limit: 11,
   });
 }
 
