@@ -162,27 +162,7 @@ async function readBossRaidRank(userId) {
 
   // 존재하는 user일 경우
   if (existedUser) {
-    let rankingInfoData = [];
-    let rankingInfoArr = [];
-
-    // user 10명을 total_score 내림차순으로 조회
-    rankingInfoArr = await userRepository.readUsersOrderByScore();
-
-    for (let i = 0; i < rankingInfoArr.length; i++) {
-      rankingInfoData.push(
-        new RankingInfoDTO(
-          i,
-          rankingInfoArr[i].userId,
-          rankingInfoArr[i].totalScore
-        )
-      );
-    }
-
-    // Redis에 rankingInfoData 캐싱
-    console.log('Redis에 랭킹 정보 캐싱');
-    await redisClient.json.set('rankingInfoData', '$', rankingInfoData);
-    // 20분 후 만료 되도록 설정
-    await redisClient.expire('rankingInfoData', 1200);
+    const rankingInfoData = await setRankToRedis();
 
     return rankingInfoData;
   } else {
