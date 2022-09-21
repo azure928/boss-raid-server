@@ -5,15 +5,13 @@ const MyRankingInfoDTO = require('./myRankingInfoDTO');
 const moment = require('moment');
 const { getStaticData } = require('../../utils/getStaticData');
 require('date-utils');
+const { redisClient } = require('../../database/config/redisClient');
 
 // 보스레이드 상태 조회
 async function readBossRaidStatus() {
   const bossRaidStatus = await bossRaidRepository.readBossRaidStatus();
   let canEnter;
   const enter_time = moment(bossRaidStatus[0].enter_time);
-
-  //console.log('enter_time', enter_time);
-  //console.log('bossRaidStatus!!', bossRaidStatus[0].status);
 
   if (
     bossRaidStatus[0].status == '성공' ||
@@ -24,16 +22,18 @@ async function readBossRaidStatus() {
 
   if (bossRaidStatus[0].status == '진행중') {
     const today = moment();
-    //console.log('today', today);
 
     const timeDiff = moment.duration(today.diff(enter_time)).asMinutes();
-    console.log('분 차이: ', timeDiff);
+    let timeDiffSeconds = timeDiff * 60;
 
-    if (timeDiff >= 3) {
+    // StaticData에서 보스레이드 정보 받아오기
+    let { bossRaidLimitSeconds } = await getStaticData();
+
+    if (timeDiffSeconds >= bossRaidLimitSeconds) {
       canEnter = true;
     }
 
-    if (timeDiff < 3) {
+    if (timeDiffSeconds < bossRaidLimitSeconds) {
       canEnter = false;
     }
   }
@@ -148,7 +148,6 @@ async function readBossRaidRank(userId) {
   if (existedUser) {
     let rankingInfoData = [];
     let rankingInfoArr = [];
-    let myRankingInfoData = [];
 
     // user 10명을 total_score 내림차순으로 조회
     rankingInfoArr = await userRepository.readUsersOrderByScore();
@@ -163,6 +162,29 @@ async function readBossRaidRank(userId) {
       );
     }
 
+    // Redis에 rankingInfoData 캐싱
+    console.log('Redis에 랭킹 정보 캐싱');
+    await redisClient.json.set('rankingInfoData', '$', rankingInfoData);
+    // 20분 후 만료 되도록 설정
+    await redisClient.expire('rankingInfoData', 1200);
+
+    return rankingInfoData;
+  } else {
+    // 존재하지 않는 user일 경우
+    const error = new Error('존재하지 않는 유저 아이디입니다.');
+    error.statusCode = 404;
+    throw error;
+  }
+}
+
+async function readUserBossRaidRank(userId) {
+  // 존재하는 user id 인지 확인
+  const existedUser = await userRepository.readUserById(userId);
+
+  // 존재하는 user일 경우
+  if (existedUser) {
+    let myRankingInfoData = [];
+
     // 내 랭킹 조회 (user id로)
     const myRankingInfoArr = await userRepository.readUserTotalScoreById(
       userId
@@ -176,12 +198,7 @@ async function readBossRaidRank(userId) {
       )
     );
 
-    const rankingResult = {
-      topRankerInfoList: rankingInfoData,
-      myRankingInfo: myRankingInfoData[0],
-    };
-
-    return rankingResult;
+    return myRankingInfoData;
   } else {
     // 존재하지 않는 user일 경우
     const error = new Error('존재하지 않는 유저 아이디입니다.');
@@ -195,4 +212,5 @@ module.exports = {
   startBossRaid,
   stopBossRaid,
   readBossRaidRank,
+  readUserBossRaidRank,
 };
