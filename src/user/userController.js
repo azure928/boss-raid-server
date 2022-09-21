@@ -16,12 +16,12 @@ async function createUser(req, res) {
 }
 
 // 유저 조회
-async function readUserRaidHistory(req, res) {
+async function readUserRaidRecord(req, res) {
   try {
     const id = req.params.id;
 
-    const selectedUserInfo = await userService.readUserRaidHistory(id);
-    res.status(200).json(selectedUserInfo);
+    const result = await userService.readUserRaidRecord(id);
+    res.status(200).json(result);
   } catch (error) {
     console.log(error);
     return res.status(error.statusCode || 500).send(
@@ -32,4 +32,4 @@ async function readUserRaidHistory(req, res) {
   }
 }
 
-module.exports = { createUser, readUserRaidHistory };
+module.exports = { createUser, readUserRaidRecord };

@@ -27,15 +27,15 @@ async function readBossRaidStatus(req, res) {
 async function startBossRaid(req, res) {
   try {
     const { userId, level } = req.body;
-    const createdRaidHistory = await bossRaidService.startBossRaid(
+    const createdRaidRecord = await bossRaidService.startBossRaid(
       userId,
       level
     );
 
-    if (createdRaidHistory.isEntered == true) {
-      res.status(201).json(createdRaidHistory);
+    if (createdRaidRecord.isEntered == true) {
+      res.status(201).json(createdRaidRecord);
     } else {
-      res.status(400).json(createdRaidHistory);
+      res.status(400).json(createdRaidRecord);
     }
   } catch (error) {
     console.log(error);

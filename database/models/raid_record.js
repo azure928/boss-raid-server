@@ -1,7 +1,7 @@
 const Sequelize = require('sequelize');
 module.exports = function (sequelize, DataTypes) {
   return sequelize.define(
-    'boss_raid_history',
+    'raid_record',
     {
       id: {
         autoIncrement: true,
@@ -42,7 +42,7 @@ module.exports = function (sequelize, DataTypes) {
     },
     {
       sequelize,
-      tableName: 'boss_raid_history',
+      tableName: 'raid_record',
       timestamps: true,
       indexes: [
         {

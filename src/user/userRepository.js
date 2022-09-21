@@ -1,6 +1,6 @@
 const db = require('../../database/models/index');
 const User = db.user;
-const Boss_raid_history = db.boss_raid_history;
+const Raid_record = db.raid_record;
 const SQ = require('sequelize');
 const Sequelize = SQ.Sequelize;
 const { sequelize } = require('../../database/models/index');
@@ -17,7 +17,7 @@ const createUser = async () => {
 /**
  * 기능: user 조회 (user의 보스레이드 총 점수와 참여기록 응답)
  */
-async function readUserRaidHistoryById(id) {
+async function readUserRaidRecordById(id) {
   return await User.findAll({
     attributes: [
       ['id', 'UserId'],
@@ -25,8 +25,8 @@ async function readUserRaidHistoryById(id) {
     ],
     include: [
       {
-        model: Boss_raid_history,
-        as: 'boss_raid_histories',
+        model: Raid_record,
+        as: 'raid_records',
         attributes: [
           [Sequelize.col('id'), 'raidRecordId'],
           [Sequelize.col('score'), 'score'],
@@ -112,7 +112,7 @@ async function readUserTotalScoreById(userId) {
 
 module.exports = {
   createUser,
-  readUserRaidHistoryById,
+  readUserRaidRecordById,
   readUserById,
   updateUserTotalscore,
   readUsersOrderByScore,
