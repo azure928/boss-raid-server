@@ -13,9 +13,6 @@ async function readBossRaidStatus() {
   let canEnter;
   const enter_time = moment(bossRaidStatus[0].enter_time);
 
-  //console.log('enter_time', enter_time);
-  //console.log('bossRaidStatus!!', bossRaidStatus[0].status);
-
   if (
     bossRaidStatus[0].status == '성공' ||
     bossRaidStatus[0].status == '실패'
@@ -25,16 +22,18 @@ async function readBossRaidStatus() {
 
   if (bossRaidStatus[0].status == '진행중') {
     const today = moment();
-    //console.log('today', today);
 
     const timeDiff = moment.duration(today.diff(enter_time)).asMinutes();
-    console.log('분 차이: ', timeDiff);
+    let timeDiffSeconds = timeDiff * 60;
 
-    if (timeDiff >= 3) {
+    // StaticData에서 보스레이드 정보 받아오기
+    let { bossRaidLimitSeconds } = await getStaticData();
+
+    if (timeDiffSeconds >= bossRaidLimitSeconds) {
       canEnter = true;
     }
 
-    if (timeDiff < 3) {
+    if (timeDiffSeconds < bossRaidLimitSeconds) {
       canEnter = false;
     }
   }

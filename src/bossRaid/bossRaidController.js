@@ -4,9 +4,15 @@ const { redisClient } = require('../../database/config/redisClient');
 // 보스레이드 상태 조회
 async function readBossRaidStatus(req, res) {
   try {
-    const result = await bossRaidService.readBossRaidStatus();
+    const bossRaidStatus = await bossRaidService.readBossRaidStatus();
 
-    res.status(200).json(result);
+    if (bossRaidStatus.canEnter === true) {
+      res.status(200).json({
+        canEnter: bossRaidStatus.canEnter,
+      });
+    } else {
+      res.status(200).json(bossRaidStatus);
+    }
   } catch (error) {
     console.log(error);
     return res.status(error.statusCode || 500).send(
