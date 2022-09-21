@@ -56,13 +56,13 @@
 
 ## 📃 API DOCS
 
-**[🔗 PostMan API Document](https://github.com/azure928/boss-raid-server)**
+**[🔗 PostMan API Document](https://documenter.getpostman.com/view/21288917/2s7Z7VKaQ7)**
 
 <br>
 
 ## 📚 ERD
 
-![image](https://i.imgur.com/OVNWPSa.png)
+![image](https://i.imgur.com/f6bbo6B.png)
 
 - **user** : 유저 정보 저장하는 테이블
   - total_score : 유저의 보스레이드 총 점수 저장
