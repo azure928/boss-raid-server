@@ -1,19 +1,16 @@
 var DataTypes = require('sequelize').DataTypes;
-var _boss_raid_history = require('./boss_raid_history');
+var _raid_record = require('./raid_record');
 var _user = require('./user');
 
 function initModels(sequelize) {
-  var boss_raid_history = _boss_raid_history(sequelize, DataTypes);
+  var raid_record = _raid_record(sequelize, DataTypes);
   var user = _user(sequelize, DataTypes);
 
-  boss_raid_history.belongsTo(user, { as: 'user', foreignKey: 'user_id' });
-  user.hasMany(boss_raid_history, {
-    as: 'boss_raid_histories',
-    foreignKey: 'user_id',
-  });
+  raid_record.belongsTo(user, { as: 'user', foreignKey: 'user_id' });
+  user.hasMany(raid_record, { as: 'raid_records', foreignKey: 'user_id' });
 
   return {
-    boss_raid_history,
+    raid_record,
     user,
   };
 }

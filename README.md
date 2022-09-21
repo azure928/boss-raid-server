@@ -8,13 +8,14 @@
 
 ### 1. 유저 생성
 
-- 중복되지 않는 userId를 생성, score 는 default 값 0 으로 생성
+- 중복되지 않는 userId를 생성
+- score 는 default 값 0 으로 생성
 
 ### 2. 유저 보스레이드 기록 조회
 
 - 유저의 보스레이드 총 점수와 참여기록 응답 (params로 user id를 전달받는다.)
   - user 테이블에서 해당하는 유저의 총 점수를 조회
-  - boss_raid_history 테이블에서 해당하는 유저의 보스레이드 참여 기록 조회
+  - raid_record 테이블에서 해당하는 유저의 보스레이드 참여 기록 조회
 
 ### 3. 보스레이드 상태 조회
 
@@ -39,15 +40,15 @@
 - 레이드 level에 따른 score 반영
   - static data를 redis에 캐싱 하여 사용하도록 구현함
 - 유효성 검사
-  - 입력받은 raid_record_id 를 이용하여 해당 레이드에 참여한 사용자 아이디, 레벨, 입장 시간을 조회한다.
+  - 입력받은 raidRecordId 를 이용하여 해당 레이드에 참여한 사용자 아이디, 레벨, 입장 시간을 조회한다.
   - 조회한 사용자 아이디가 입력받은 사용자 아이디와 일치하지 않을 경우 예외 처리
   - static data에서 읽어온 제한 시간을 초과한 경우 예외 처리
-  - boss_raid_history에 end_time 값이 존재한다면 이미 종료된 레이드이기 때문에 중복되지 않도록 예외 처리
+  - raid_record에 end_time 값이 존재한다면 이미 종료된 레이드이기 때문에 중복되지 않도록 예외 처리
 
 ### 6. 보스레이드 랭킹 조회
 
-- 유저 10명을 total score 내림차순으로 조회
-- 입력받은 유저 id로 나의 랭킹도 조회
+- 유저 10명을 total_score 내림차순으로 조회
+- 입력받은 userId로 나의 랭킹도 조회
 - 랭킹 데이터는 redis에 캐싱 하여 구현함
   - 보스레이드 랭킹 조회 api 요청 시 먼저 redis에 랭킹 데이터가 있는지 조회하며, 있으면 redis에서 get 해오고 없으면 DB에서 조회하여 Redis에 캐싱 한다.
 
@@ -61,7 +62,17 @@
 
 ## 📚 ERD
 
-![image](https://i.imgur.com/9UJMLG6.png)
+![image](https://i.imgur.com/OVNWPSa.png)
+
+- **user** : 유저 정보 저장하는 테이블
+  - total_score : 유저의 보스레이드 총 점수 저장
+- **raid_record** : 보스레이드 기록을 저장하는 테이블
+  - user_id : 해당 보스레이드에 참여한 유저 id
+  - enter_time : 보스레이드를 시작한 시간
+  - end_time : 보스레이드를 종료한 시간 (성공 or 실패했을 때 입력)
+  - score : 해당 레이드에서 획득한 점수
+  - level : 해당 레이드의 레벨
+  - status : 해당 레이드의 상태 (성공 / 실패 / 진행 중)
 
 <br>
 
@@ -83,7 +94,7 @@
 │     │    └── db.config.js
 │     │    └── redisClient.js
 │     └── 📁models
-│          └── boss_raid_history.js
+│          └── raid_record.js
 │          └── user.js
 │          └── index.js
 │          └── init-models.js
