@@ -58,23 +58,6 @@ async function stopBossRaid(req, res) {
   }
 }
 
-// 보스레이드 랭킹 조회
-/*
-async function readBossRaidRank(req, res) {
-  try {
-    const { userId } = req.body;
-    const result = await bossRaidService.readBossRaidRank(userId);
-
-    res.status(200).json(result);
-  } catch (error) {
-    console.log(error);
-    return res.status(error.statusCode || 500).send(
-      { error: error.message } || {
-        error: 'Internal Server Error',
-      }
-    );
-  }
-}*/
 async function readBossRaidRank(req, res) {
   try {
     const { userId } = req.body;

@@ -141,57 +141,6 @@ async function stopBossRaid(userId, raidRecordId) {
 }
 
 // 보스레이드 랭킹 조회
-/*
-async function readBossRaidRank(userId) {
-  // 존재하는 user id 인지 확인
-  const existedUser = await userRepository.readUserById(userId);
-
-  // 존재하는 user일 경우
-  if (existedUser) {
-    let rankingInfoData = [];
-    let rankingInfoArr = [];
-    let myRankingInfoData = [];
-
-    // user 10명을 total_score 내림차순으로 조회
-    rankingInfoArr = await userRepository.readUsersOrderByScore();
-
-    for (let i = 0; i < rankingInfoArr.length; i++) {
-      rankingInfoData.push(
-        new RankingInfoDTO(
-          i,
-          rankingInfoArr[i].userId,
-          rankingInfoArr[i].totalScore
-        )
-      );
-    }
-
-    // 내 랭킹 조회 (user id로)
-    const myRankingInfoArr = await userRepository.readUserTotalScoreById(
-      userId
-    );
-
-    myRankingInfoData.push(
-      new MyRankingInfoDTO(
-        myRankingInfoArr[0].ranking - 1,
-        myRankingInfoArr[0].id,
-        myRankingInfoArr[0].totalScore
-      )
-    );
-
-    const rankingResult = {
-      topRankerInfoList: rankingInfoData,
-      myRankingInfo: myRankingInfoData[0],
-    };
-
-    return rankingResult;
-  } else {
-    // 존재하지 않는 user일 경우
-    const error = new Error('존재하지 않는 유저 아이디입니다.');
-    error.statusCode = 404;
-    throw error;
-  }
-} */
-
 async function readBossRaidRank(userId) {
   // 존재하는 user id 인지 확인
   const existedUser = await userRepository.readUserById(userId);
