@@ -31,22 +31,24 @@
 - 보스레이드 상태 조회 함수를 호출하여 시작 가능 상태라면
   중복되지 않는 raidRecordId를 생성하여 `isEntered:true` 와 함께 응답
 
-- 레이드 시작이 불가하다면 `isEntered : false` 응답<br>
+- 레이드 시작이 불가하다면 `isEntered : false` 응답
 
 ### 5. 보스레이드 종료
 
 - raidRecordId 종료 처리
 - 레이드 level에 따른 score 반영
-  - static data를 redis에 캐싱 하여 사용
+  - static data를 redis에 캐싱 하여 사용하도록 구현함
 - 유효성 검사
   - 입력받은 raid_record_id 를 이용하여 해당 레이드에 참여한 사용자 아이디, 레벨, 입장 시간을 조회한다.
   - 조회한 사용자 아이디가 입력받은 사용자 아이디와 일치하지 않을 경우 예외 처리
   - static data에서 읽어온 제한 시간을 초과한 경우 예외 처리
+  - boss_raid_history에 end_time 값이 존재한다면 이미 종료된 레이드이기 때문에 중복되지 않도록 예외 처리
 
 ### 6. 보스레이드 랭킹 조회
 
 - 유저 10명을 total score 내림차순으로 조회
 - 입력받은 유저 id로 나의 랭킹도 조회
+- 랭킹 데이터는 redis에 캐싱 하여 구현함
 
 <br>
 

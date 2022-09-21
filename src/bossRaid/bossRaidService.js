@@ -5,6 +5,7 @@ const MyRankingInfoDTO = require('./myRankingInfoDTO');
 const moment = require('moment');
 const { getStaticData } = require('../../utils/getStaticData');
 require('date-utils');
+const { redisClient } = require('../../database/config/redisClient');
 
 // 보스레이드 상태 조회
 async function readBossRaidStatus() {
@@ -140,6 +141,7 @@ async function stopBossRaid(userId, raidRecordId) {
 }
 
 // 보스레이드 랭킹 조회
+/*
 async function readBossRaidRank(userId) {
   // 존재하는 user id 인지 확인
   const existedUser = await userRepository.readUserById(userId);
@@ -188,6 +190,73 @@ async function readBossRaidRank(userId) {
     error.statusCode = 404;
     throw error;
   }
+} */
+
+async function readBossRaidRank(userId) {
+  // 존재하는 user id 인지 확인
+  const existedUser = await userRepository.readUserById(userId);
+
+  // 존재하는 user일 경우
+  if (existedUser) {
+    let rankingInfoData = [];
+    let rankingInfoArr = [];
+
+    // user 10명을 total_score 내림차순으로 조회
+    rankingInfoArr = await userRepository.readUsersOrderByScore();
+
+    for (let i = 0; i < rankingInfoArr.length; i++) {
+      rankingInfoData.push(
+        new RankingInfoDTO(
+          i,
+          rankingInfoArr[i].userId,
+          rankingInfoArr[i].totalScore
+        )
+      );
+    }
+
+    // Redis에 rankingInfoData 캐싱
+    console.log('Redis에 랭킹 정보 캐싱');
+    await redisClient.json.set('rankingInfoData', '$', rankingInfoData);
+    // 20분 후 만료 되도록 설정
+    await redisClient.expire('rankingInfoData', 1200);
+
+    return rankingInfoData;
+  } else {
+    // 존재하지 않는 user일 경우
+    const error = new Error('존재하지 않는 유저 아이디입니다.');
+    error.statusCode = 404;
+    throw error;
+  }
+}
+
+async function readUserBossRaidRank(userId) {
+  // 존재하는 user id 인지 확인
+  const existedUser = await userRepository.readUserById(userId);
+
+  // 존재하는 user일 경우
+  if (existedUser) {
+    let myRankingInfoData = [];
+
+    // 내 랭킹 조회 (user id로)
+    const myRankingInfoArr = await userRepository.readUserTotalScoreById(
+      userId
+    );
+
+    myRankingInfoData.push(
+      new MyRankingInfoDTO(
+        myRankingInfoArr[0].ranking - 1,
+        myRankingInfoArr[0].id,
+        myRankingInfoArr[0].totalScore
+      )
+    );
+
+    return myRankingInfoData;
+  } else {
+    // 존재하지 않는 user일 경우
+    const error = new Error('존재하지 않는 유저 아이디입니다.');
+    error.statusCode = 404;
+    throw error;
+  }
 }
 
 module.exports = {
@@ -195,4 +264,5 @@ module.exports = {
   startBossRaid,
   stopBossRaid,
   readBossRaidRank,
+  readUserBossRaidRank,
 };
