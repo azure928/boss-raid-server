@@ -58,6 +58,7 @@ async function stopBossRaid(req, res) {
   }
 }
 
+// 보스레이드 랭킹 조회
 async function readBossRaidRank(req, res) {
   try {
     const { userId } = req.body;

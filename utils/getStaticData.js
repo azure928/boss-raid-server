@@ -5,7 +5,6 @@ require('dotenv').config();
 async function getStaticData(req, res, next) {
   try {
     const staticdata = await redisClient.json.get('staticdata');
-    //const staticdata = await redisClient.getex('staticdata');
     //console.log('staticdata??', staticdata);
 
     if (staticdata) {
@@ -19,7 +18,8 @@ async function getStaticData(req, res, next) {
       //console.log('staticdata!!', staticdata);
 
       await redisClient.json.set('staticdata', '$', staticdata);
-      //await redisClient.setex('staticdata', 1440, JSON.stringify(staticdata));
+      // 6시간 후 만료 되도록 설정
+      await redisClient.expire('staticdata', 21600);
       return staticdata;
     }
   } catch (error) {
