@@ -2,7 +2,7 @@ const axios = require('axios');
 const { redisClient } = require('../database/config/redisClient');
 require('dotenv').config();
 
-async function getStaticData(req, res, next) {
+async function setStaticData(req, res, next) {
   try {
     const staticdata = await redisClient.json.get('staticdata');
     //console.log('staticdata??', staticdata);
@@ -28,4 +28,4 @@ async function getStaticData(req, res, next) {
   }
 }
 
-module.exports = { getStaticData };
+module.exports = { setStaticData };

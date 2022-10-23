@@ -40,8 +40,9 @@ async function startBossRaid(req, res) {
 
 // 보스레이드 종료
 async function stopBossRaid(req, res) {
+  const redis = req.app.get('redis');
   const { userId, raidRecordId } = req.body;
-  const result = await bossRaidService.stopBossRaid(userId, raidRecordId);
+  const result = await bossRaidService.stopBossRaid(userId, raidRecordId, redis);
 
   return res.status(201).json({
     message: '보스레이드 성공',

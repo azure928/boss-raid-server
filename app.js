@@ -8,6 +8,7 @@ const errorHandler = require('./middlewares/errorHandler');
 const routes = require('./components/indexRouter');
 const { sequelize } = require('./database/models/index');
 const InitRedis = require('./middlewares/InitRedis');
+const setRaidData = require('./utils/setRaidData');
 
 //* DB 연결
 sequelize
@@ -19,12 +20,14 @@ sequelize
     console.error(err);
   });
 
+app.use(InitRedis);
+app.use(setRaidData);
+
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(morgan('dev'));
 
-app.use(InitRedis);
 app.use(routes);
 
 app.get('/ping', (req, res) => {

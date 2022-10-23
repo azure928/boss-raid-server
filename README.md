@@ -86,45 +86,6 @@
 
 <br>
 
-### 📂 폴더 구조
-
-```
-├── 📁database
-│     ├── 📁config
-│     │    └── db.config.js
-│     │    └── redisClient.js
-│     └── 📁models
-│          └── raid_record.js
-│          └── user.js
-│          └── index.js
-│          └── init-models.js
-├── 📁node_modules
-├── 📁src
-│     ├── 📁bossRaid
-│     │    └── bossRaidController.js
-│     │    └── bossRaidRepository.js
-│     │    └── bossRaidRouter.js
-│     │    └── bossRaidService.js
-│     │    └── myRankingInfoDTO.js
-│     │    └── rankingInfoDTO.js
-│     └── 📁user
-│     │    └── userController.js
-│     │    └── userRepository.js
-│     │    └── userRouter.js
-│     │    └── userService.js
-│     └── indexRouter.js
-├── 📁utils
-│     └── getStaticData.js
-├── .env
-├── .gitignore
-├── .eslintrc
-├── .prettierrc
-├── package-lock.json
-├── package.json
-├── README.md
-└── server.js
-```
-
 ### 🔐 환경 변수 설정
 
 ```

@@ -49,6 +49,7 @@ async function readUserById(id) {
     where: {
       id: id,
     },
+    raw: true,
   });
 }
 
