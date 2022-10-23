@@ -2,6 +2,7 @@ const bossRaidService = require('./bossRaidService');
 const { redisClient } = require('../../database/config/redisClient');
 
 // 보스레이드 상태 조회
+/*
 async function readBossRaidStatus(req, res) {
   const bossRaidStatus = await bossRaidService.readBossRaidStatus();
 
@@ -12,7 +13,20 @@ async function readBossRaidStatus(req, res) {
   } else {
     res.status(200).json(bossRaidStatus);
   }
-}
+}*/
+
+// 보스레이드 상태 조회
+const readBossRaidStatus = async (req, res) => {
+  const bossRaidStatus = await bossRaidService.readBossRaidStatus();
+
+  if (bossRaidStatus.canEnter === true) {
+    res.status(200).json({
+      canEnter: bossRaidStatus.canEnter,
+    });
+  } else {
+    res.status(200).json(bossRaidStatus);
+  }
+};
 
 // 보스레이드 시작
 async function startBossRaid(req, res) {

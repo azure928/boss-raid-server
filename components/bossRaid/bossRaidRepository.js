@@ -1,16 +1,20 @@
 const db = require('../../database/models/index');
 const Raid_record = db.raid_record;
+const { redisClient } = require('../../database/config/redisClient');
 
 /**
  * 기능: 보스레이드 상태 조회 (보스레이드 현재 상태 응답)
  */
-async function readBossRaidStatus() {
+/*async function readBossRaidStatus() {
   return await Raid_record.findAll({
     attributes: ['id', 'user_id', 'enter_time', 'status'],
     order: [['createdAt', 'DESC']],
     limit: 1,
   });
-}
+}*/
+const readBossRaidStatus = async () => {
+  return await redisClient.json.get('raidStatus');
+};
 
 /**
  * 기능: 중복되지 않는 Raid_record id 생성

@@ -1,14 +1,13 @@
 const bossRaidRepository = require('./bossRaidRepository');
 const userRepository = require('../user/userRepository');
-const RankingInfoDTO = require('./rankingInfoDTO');
 const MyRankingInfoDTO = require('./myRankingInfoDTO');
 const moment = require('moment');
 require('date-utils');
 const { getStaticData } = require('../../utils/getStaticData');
 const { setRankToRedis } = require('../../utils/setRankToRedis');
-const { redisClient } = require('../../database/config/redisClient');
 
 // 보스레이드 상태 조회
+/*
 async function readBossRaidStatus() {
   const bossRaidStatus = await bossRaidRepository.readBossRaidStatus();
   let canEnter;
@@ -47,7 +46,20 @@ async function readBossRaidStatus() {
   };
 
   return result;
-}
+}*/
+
+// 보스레이드 상태 조회
+const readBossRaidStatus = async () => {
+  const bossRaidStatus = await bossRaidRepository.readBossRaidStatus();
+
+  if (!bossRaidStatus) {
+    const error = new Error();
+    error.statusCode = 500;
+    throw error;
+  }
+
+  return bossRaidStatus;
+};
 
 // 보스레이드 시작
 async function startBossRaid(userId, level) {
