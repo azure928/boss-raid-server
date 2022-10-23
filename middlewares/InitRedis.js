@@ -1,13 +1,13 @@
 const Redis = require('redis');
 
-const InitRedis = async (req, res, next) => {
+module.exports = async (req, res, next) => {
   if (req.app.get('redis')) {
     return next();
   }
 
   const redisClient = Redis.createClient({
-    url: `redis://${process.env.REDIS_USERNAME}:${process.env.REDIS_PASSWORD}@${process.env.REDIS_HOST}:${process.env.REDIS_PORT}/0`,
-    legacyMode: true,
+    url: `redis://${process.env.REDIS_HOST}:${process.env.REDIS_PORT}`,
+    password: process.env.REDIS_PASSWORD,
   });
 
   redisClient.on('connect', () => {
@@ -22,7 +22,5 @@ const InitRedis = async (req, res, next) => {
     next(err);
   });
 
-  await redisClient.connect(); // redis v4 연결 (비동기)
+  await redisClient.connect();
 };
-
-module.exports = InitRedis;

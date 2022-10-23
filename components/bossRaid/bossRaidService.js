@@ -62,6 +62,7 @@ const readBossRaidStatus = async redis => {
 };
 
 // 보스레이드 시작
+/*
 async function startBossRaid(userId, level) {
   let isEntered = false;
 
@@ -69,6 +70,7 @@ async function startBossRaid(userId, level) {
 
   if (bossRaidStatus.canEnter === true) {
     // 게임 시작 가능
+    // 중복되지 않는 Raid_record id 생성
     const createdRaidRecord = await bossRaidRepository.createRaidRecord(userId, level);
 
     isEntered = true;
@@ -78,7 +80,59 @@ async function startBossRaid(userId, level) {
     // 게임 시작 불가능
     return { isEntered };
   }
-}
+}*/
+
+// 보스레이드 시작
+const startBossRaid = async (userId, level, redis) => {
+  const bossRaidStatus = await redis.json.get('raidStatus');
+
+  if (!bossRaidStatus) {
+    const error = new Error();
+    error.statusCode = 500;
+    throw error;
+  }
+
+  if (bossRaidStatus.canEnter === false) {
+    return { isEntered: false };
+  }
+
+  // 존재하는 유저인지 확인
+  const selectedUser = await userRepository.readUserById(userId);
+  if (!selectedUser) {
+    const error = new Error('존재하지 않는 유저 아이디입니다.');
+    error.statusCode = 404;
+    throw error;
+  }
+
+  if (level < 0 || level > 2) {
+    const error = new Error('level은 0~2범위 안에서 선택 가능합니다.');
+    error.statusCode = 400;
+    throw error;
+  }
+
+  // 중복되지 않는 Raid_record id 생성
+  const createdRaidRecord = await bossRaidRepository.createRaidRecord(userId, level);
+  const enterTime = moment();
+
+  await redis.watch('raidStatus', 'enteredRaidInfo');
+  //Watch 명령 : Transaction 이 마무리 되는 명령(Exec)이 실행되기 이전에 모니터링 중이던 key 의 변경사항이 있다면 반영하지 않도록 하는 사전에 등록해두는 명령
+
+  await redis
+    .multi() //Multi 명령 : Transaction 시작을 나타내는 명령
+    .json.set('enteredRaidInfo', '$', {
+      raidRecordId: createdRaidRecord.id,
+      userId: userId,
+      enterTime,
+      endTime: null,
+    })
+    .json.set('raidStatus', '$', {
+      canEnter: false,
+      enteredUserId: userId,
+    })
+    .exec(); //Exec 명령 : Transaction 작성을 마치고 내용들을 실행하는 명령
+
+  return { isEntered: true, raidRecordId: createdRaidRecord.id };
+};
 
 // 보스레이드 종료
 async function stopBossRaid(userId, raidRecordId) {

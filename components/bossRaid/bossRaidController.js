@@ -31,14 +31,11 @@ const readBossRaidStatus = async (req, res) => {
 
 // 보스레이드 시작
 async function startBossRaid(req, res) {
+  const redis = req.app.get('redis');
   const { userId, level } = req.body;
-  const createdRaidRecord = await bossRaidService.startBossRaid(userId, level);
+  const createdRaidRecord = await bossRaidService.startBossRaid(userId, level, redis);
 
-  if (createdRaidRecord.isEntered == true) {
-    res.status(201).json(createdRaidRecord);
-  } else {
-    res.status(400).json(createdRaidRecord);
-  }
+  return res.status(201).json(createdRaidRecord);
 }
 
 // 보스레이드 종료
