@@ -24,6 +24,7 @@ async function createRaidRecord(userId, level) {
     user_id: userId,
     level: level,
     status: '진행중',
+    raw: true,
   });
 }
 

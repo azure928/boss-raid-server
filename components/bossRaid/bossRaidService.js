@@ -49,8 +49,8 @@ async function readBossRaidStatus() {
 }*/
 
 // 보스레이드 상태 조회
-const readBossRaidStatus = async () => {
-  const bossRaidStatus = await bossRaidRepository.readBossRaidStatus();
+const readBossRaidStatus = async redis => {
+  const bossRaidStatus = await redis.json.get('raidStatus');
 
   if (!bossRaidStatus) {
     const error = new Error();

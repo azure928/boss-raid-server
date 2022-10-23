@@ -7,6 +7,7 @@ const morgan = require('morgan');
 const errorHandler = require('./middlewares/errorHandler');
 const routes = require('./components/indexRouter');
 const { sequelize } = require('./database/models/index');
+const InitRedis = require('./middlewares/InitRedis');
 
 //* DB 연결
 sequelize
@@ -23,6 +24,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(morgan('dev'));
 
+app.use(InitRedis);
 app.use(routes);
 
 app.get('/ping', (req, res) => {
