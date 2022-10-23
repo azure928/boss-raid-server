@@ -12,11 +12,7 @@ async function setRankToRedis(req, res, next) {
 
     for (let i = 0; i < rankingInfoArr.length; i++) {
       rankingInfoData.push(
-        new RankingInfoDTO(
-          i,
-          rankingInfoArr[i].userId,
-          rankingInfoArr[i].totalScore
-        )
+        new RankingInfoDTO(i, rankingInfoArr[i].userId, rankingInfoArr[i].totalScore)
       );
     }
 

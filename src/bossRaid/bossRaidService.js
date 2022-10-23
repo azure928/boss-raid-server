@@ -15,10 +15,7 @@ async function readBossRaidStatus() {
   const enter_time = moment(bossRaidStatus[0].enter_time);
   //console.log('bossRaidStatus', bossRaidStatus);
 
-  if (
-    bossRaidStatus[0].status == '성공' ||
-    bossRaidStatus[0].status == '실패'
-  ) {
+  if (bossRaidStatus[0].status == '성공' || bossRaidStatus[0].status == '실패') {
     canEnter = true;
   }
 
@@ -60,10 +57,7 @@ async function startBossRaid(userId, level) {
 
   if (bossRaidStatus.canEnter === true) {
     // 게임 시작 가능
-    const createdRaidRecord = await bossRaidRepository.createRaidRecord(
-      userId,
-      level
-    );
+    const createdRaidRecord = await bossRaidRepository.createRaidRecord(userId, level);
 
     isEntered = true;
     const raidRecordId = createdRaidRecord.id;
@@ -83,8 +77,9 @@ async function stopBossRaid(userId, raidRecordId) {
     let status;
 
     let { total_score } = await userRepository.readUserById(userId);
-    let { user_id, level, enter_time, end_time } =
-      await bossRaidRepository.readRaidRecordById(raidRecordId);
+    let { user_id, level, enter_time, end_time } = await bossRaidRepository.readRaidRecordById(
+      raidRecordId
+    );
 
     // StaticData에서 보스레이드 정보 받아오기
     let { bossRaidLimitSeconds, levels } = await getStaticData();
@@ -116,19 +111,11 @@ async function stopBossRaid(userId, raidRecordId) {
     let endTime = new Date();
     let endTimeFormat = endTime.toFormat('YYYY-MM-DD HH:MI:SS');
 
-    if (
-      (endTime.getTime() - new Date(enter_time).getTime()) / 1000 >
-      bossRaidLimitSeconds
-    ) {
+    if ((endTime.getTime() - new Date(enter_time).getTime()) / 1000 > bossRaidLimitSeconds) {
       // end_time, status 업데이트 (raid_record 테이블)
       status = '실패';
       score = 0;
-      await bossRaidRepository.updateRaidRecord(
-        raidRecordId,
-        endTimeFormat,
-        status,
-        score
-      );
+      await bossRaidRepository.updateRaidRecord(raidRecordId, endTimeFormat, status, score);
       const error = new Error('레이드 실패! 레이드 제한 시간을 초과했습니다.');
       error.statusCode = 400;
       throw error;
@@ -136,12 +123,7 @@ async function stopBossRaid(userId, raidRecordId) {
 
     // end_time, score, status 업데이트 (raid_record 테이블)
     status = '성공';
-    await bossRaidRepository.updateRaidRecord(
-      raidRecordId,
-      endTimeFormat,
-      status,
-      score
-    );
+    await bossRaidRepository.updateRaidRecord(raidRecordId, endTimeFormat, status, score);
     // total_score 업데이트 (user 테이블)
     await userRepository.updateUserTotalscore(total_score, userId);
 
@@ -182,9 +164,7 @@ async function readUserBossRaidRank(userId) {
     let myRankingInfoData = [];
 
     // 내 랭킹 조회 (user id로)
-    const myRankingInfoArr = await userRepository.readUserTotalScoreById(
-      userId
-    );
+    const myRankingInfoArr = await userRepository.readUserTotalScoreById(userId);
 
     myRankingInfoData.push(
       new MyRankingInfoDTO(
