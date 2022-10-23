@@ -5,7 +5,7 @@ const app = express();
 const cors = require('cors');
 const morgan = require('morgan');
 const errorHandler = require('./middlewares/errorHandler');
-const routes = require('./src/indexRouter');
+const routes = require('./components/indexRouter');
 const { sequelize } = require('./database/models/index');
 
 //* DB 연결

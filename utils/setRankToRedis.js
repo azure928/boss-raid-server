@@ -1,6 +1,6 @@
 const { redisClient } = require('../database/config/redisClient');
-const userRepository = require('../src/user/userRepository');
-const RankingInfoDTO = require('../src/bossRaid/rankingInfoDTO');
+const userRepository = require('../components/user/userRepository');
+const RankingInfoDTO = require('../components/bossRaid/rankingInfoDTO');
 
 async function setRankToRedis(req, res, next) {
   try {
