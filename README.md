@@ -1,10 +1,20 @@
 # boss raid server
 
-> 보스레이드 PVE 컨텐츠 서버 API
+> 보스레이드 PVE 컨텐츠 API 서버
 
 <br>
 
-## 💬 서비스 개요 (요구사항 분석 및 구현 사항)
+## ✅ 적용 기술
+
+- 사용언어 : `Javascript`
+- 런타임 환경 : `Node.js`
+- 프레임워크 : `Express`
+- 데이터베이스 : `MySQL` `Redis`
+- ORM : `Sequelize`
+
+<br>
+
+## ✅ 서비스 개요 (요구사항 분석 및 구현 사항)
 
 ### 1. 유저 생성
 
@@ -76,49 +86,43 @@
 
 <br>
 
-### ⚒ 적용 기술
+## 📚 Redis
 
-- 사용언어 : `Javascript`
-- 런타임 환경 : `Node.js`
-- 프레임워크 : `Express`
-- 데이터베이스 : `MySQL` `Redis`
-- ORM : `Sequelize`
-
-<br>
-
-### 🔐 환경 변수 설정
+- **raidStatus** : 보스레이드 입장 가능 상태와 입장해 있는 유저 아이디를 저장
 
 ```
-PORT=
+// 입장 가능한 경우
+{"canEnter":true,"enteredUserId":null}
 
-DB_USER=
-DB_PASSWORD=
-DB_DATABASE=
-DB_HOST=
-
-REDIS_HOST=
-REDIS_PORT=
-REDIS_USERNAME=
-REDIS_PASSWORD=
-
-STATIC_DATA_URL=
+// 입장 불가능 한 경우
+{"canEnter":false,"enteredUserId":"3"}
 ```
 
-<br>
-
-## 💡 실행 방법
+- **enteredRaidInfo** : 레이드가 진행 중인 경우 해당 레이드에 대한 정보를 저장
 
 ```
-npm install
+// 진행중인 레이드가 없는 경우
+{}
+
+// 레이드가 진행중인 경우
+{"raidRecordId":6,"userId":"3","enterTime":"2022-10-23T21:38:49.250Z"}
 ```
 
+- **rankingInfoData** : 레이드 score 에 따른 전체 순위를 저장
+
 ```
-npm start
+[{"ranking":0,"userId":2,"totalScore":67},{"ranking":1,"userId":1,"totalScore":47},{"ranking":2,"userId":3,"totalScore":40}]
+```
+
+- **staticdata** : S3 오브젝트 주소로 주어진 보스레이드 관련 정적 데이터 ( level, score, 제한 시간)
+
+```
+{"bossRaidLimitSeconds":180,"levels":[{"level":0,"score":20},{"level":1,"score":47},{"level":2,"score":85}]}
 ```
 
 <br>
 
-## 📝 커밋 컨벤션
+### 📝 커밋 컨벤션
 
 - `Init:` 프로젝트 초기 세팅
 - `Feat:` 새로운 기능 추가
